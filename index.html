@@ -3,127 +3,176 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Scripps and the Moment — working draft</title>
+<title>Scripps and the Moment — Working Draft v.5</title>
 <script src="https://cdn.jsdelivr.net/npm/d3@7/dist/d3.min.js"></script>
 <style>
   :root{
-    --ink:#1a1a1a; --soft:#444; --faint:#777; --hair:#d8d6d2;
-    --bg:#fbfaf8; --card:#ffffff; --rule:#c9c6c0;
-    --maxw:740px;
+    --ink:#1B1A16; --soft:#4C4840; --faint:#6B665B;
+    --oxblood:#8A2B22; --oxblood-d:#6f2018; --teal:#1F5D57; --teal-d:#164641;
+    --rule:#BFBAA8; --hair:#E4E0D6; --bg:#FBFAF7; --card:#FFFFFF; --cream:#F1ECE2;
+    --maxw:760px;
+    --up:#2f6b4f; --down:#8A2B22;
   }
   *{box-sizing:border-box}
-  html{-webkit-text-size-adjust:100%}
+  html{-webkit-text-size-adjust:100%; scroll-behavior:smooth}
   body{
     margin:0; background:var(--bg); color:var(--ink);
-    font-family:Georgia,'Times New Roman',serif;
-    font-size:18px; line-height:1.62; padding:0 20px;
+    font-family:Georgia,'Iowan Old Style','Times New Roman',serif;
+    font-size:18px; line-height:1.64; padding:0 20px;
   }
-  .wrap{max-width:var(--maxw); margin:0 auto; padding:54px 0 90px}
+  .wrap{max-width:var(--maxw); margin:0 auto; padding:0 0 40px}
+  ::selection{background:#e7d9c8}
+
+  /* masthead */
+  .mast{padding:64px 0 30px; border-bottom:2px solid var(--ink); position:relative}
+  .mast::before{content:""; position:absolute; top:0; left:0; width:64px; height:6px; background:var(--oxblood)}
   .eyebrow{
     font-family:ui-monospace,'SF Mono',Menlo,Consolas,monospace;
-    font-size:11px; letter-spacing:.22em; text-transform:uppercase;
-    color:var(--faint); margin:0 0 18px;
+    font-size:11px; letter-spacing:.24em; text-transform:uppercase;
+    color:var(--oxblood); margin:0 0 20px; font-weight:600;
   }
   h1{
-    font-size:40px; line-height:1.08; font-weight:700; margin:0 0 16px;
-    letter-spacing:-.01em;
+    font-size:46px; line-height:1.04; font-weight:700; margin:0 0 18px; letter-spacing:-.015em;
   }
-  .standfirst{font-size:21px; line-height:1.5; color:var(--soft); margin:0 0 22px}
+  .standfirst{font-size:21px; line-height:1.5; color:var(--soft); margin:0 0 26px; font-style:italic}
   .byline{
     font-family:ui-monospace,'SF Mono',Menlo,Consolas,monospace;
-    font-size:12px; color:var(--faint); letter-spacing:.04em;
-    border-top:1px solid var(--hair); border-bottom:1px solid var(--hair);
-    padding:12px 0; margin:0 0 40px;
+    font-size:12px; color:var(--faint); letter-spacing:.04em; margin:0;
   }
-  h2{
-    font-size:13px; font-family:ui-monospace,'SF Mono',Menlo,Consolas,monospace;
-    letter-spacing:.16em; text-transform:uppercase; color:var(--faint);
-    margin:48px 0 4px;
+  .byline b{color:var(--oxblood); font-weight:600}
+
+  /* sections */
+  section{padding:8px 0; animation:rise .7s ease both}
+  .sechead{display:flex; align-items:center; gap:12px; margin:46px 0 6px}
+  .tile{
+    flex:none; width:30px; height:30px; background:var(--oxblood); color:#fff;
+    font-family:ui-monospace,Menlo,monospace; font-size:13px; font-weight:600;
+    display:flex; align-items:center; justify-content:center; border-radius:3px;
   }
-  h3{font-size:26px; line-height:1.18; font-weight:700; margin:0 0 16px}
+  .seclabel{
+    font-family:ui-monospace,Menlo,monospace; font-size:11px; letter-spacing:.18em;
+    text-transform:uppercase; color:var(--faint);
+  }
+  h3{font-size:29px; line-height:1.16; font-weight:700; margin:0 0 18px; letter-spacing:-.01em}
   p{margin:0 0 18px}
-  a{color:var(--ink); text-underline-offset:3px; text-decoration-thickness:1px}
-  a:hover{color:var(--faint)}
+  a{color:var(--oxblood); text-underline-offset:3px; text-decoration-thickness:1px}
+  a:hover{color:var(--teal)}
   strong{font-weight:700}
-  hr{border:0; border-top:1px solid var(--rule); margin:44px 0}
   .lede::first-letter{
-    font-size:58px; line-height:.8; float:left; padding:6px 10px 0 0; font-weight:700;
+    font-size:62px; line-height:.78; float:left; padding:8px 12px 0 0; font-weight:700; color:var(--oxblood);
+    font-family:Georgia,serif;
   }
+
   /* expanders */
   details{
-    border:1px solid var(--hair); border-radius:4px; background:var(--card);
-    margin:8px 0 22px; padding:0 16px;
+    border:1px solid var(--hair); border-left:3px solid var(--rule); border-radius:4px;
+    background:var(--card); margin:10px 0 24px; padding:0 18px;
+    transition:border-color .2s;
   }
-  details[open]{padding-bottom:8px}
+  details[open]{border-left-color:var(--teal); padding-bottom:10px}
   summary{
-    cursor:pointer; list-style:none; padding:13px 0; font-size:14px;
+    cursor:pointer; list-style:none; padding:14px 0; font-size:14px;
     font-family:ui-monospace,'SF Mono',Menlo,Consolas,monospace;
-    letter-spacing:.04em; color:var(--soft); display:flex; align-items:center; gap:9px;
+    letter-spacing:.02em; color:var(--soft); display:flex; align-items:center; gap:10px;
   }
+  summary:hover{color:var(--oxblood)}
   summary::-webkit-details-marker{display:none}
-  summary::before{content:"+"; font-size:16px; color:var(--faint); width:14px; display:inline-block}
-  details[open] summary::before{content:"\2013"}
-  details .body{font-size:16px; line-height:1.58; padding:2px 0 6px}
+  summary::before{content:"+"; font-size:17px; color:var(--oxblood); width:14px; display:inline-block; font-family:Georgia,serif}
+  details[open] summary::before{content:"\2013"; color:var(--teal)}
+  details .body{font-size:16px; line-height:1.6; padding:2px 0 6px; color:var(--soft)}
   details .body p{margin:0 0 14px}
   details .body p:last-child{margin-bottom:6px}
-  /* compact data */
-  table.matrix{width:100%; border-collapse:collapse; font-size:14.5px; margin:6px 0 8px}
-  table.matrix th,table.matrix td{text-align:left; vertical-align:top; padding:9px 10px; border-bottom:1px solid var(--hair)}
-  table.matrix th{font-family:ui-monospace,Menlo,monospace; font-size:11px; letter-spacing:.08em; text-transform:uppercase; color:var(--faint)}
-  table.matrix td:first-child{font-weight:700; width:34%}
-  .rail{border-left:3px solid var(--ink); padding:4px 0 4px 16px; margin:18px 0; color:var(--soft); font-size:16px}
-  .urgent{border:1px solid var(--ink); border-radius:4px; padding:2px 18px; margin:18px 0}
-  .urgent .tag{font-family:ui-monospace,Menlo,monospace; font-size:11px; letter-spacing:.14em; text-transform:uppercase; background:var(--ink); color:#fff; padding:3px 8px; display:inline-block; margin:16px 0 0}
+  details .body strong{color:var(--ink)}
+
+  /* tables */
+  table.matrix{width:100%; border-collapse:collapse; font-size:14.5px; margin:8px 0}
+  table.matrix th,table.matrix td{text-align:left; vertical-align:top; padding:10px 11px; border-bottom:1px solid var(--hair)}
+  table.matrix thead th{font-family:ui-monospace,Menlo,monospace; font-size:10.5px; letter-spacing:.1em; text-transform:uppercase; color:#fff; background:var(--oxblood)}
+  table.matrix td:first-child{font-weight:700; width:34%; color:var(--ink)}
+  table.matrix tr:hover td{background:#faf6ef}
+
+  .rail{border-left:3px solid var(--teal); padding:6px 0 6px 18px; margin:20px 0; color:var(--teal-d); font-size:16px; background:linear-gradient(90deg,#f0f5f3,transparent); border-radius:0 4px 4px 0}
+  .urgent{border:1.5px solid var(--oxblood); border-radius:5px; padding:4px 20px 16px; margin:22px 0; background:#fdf6f4}
+  .urgent .tag{font-family:ui-monospace,Menlo,monospace; font-size:10.5px; letter-spacing:.16em; text-transform:uppercase; background:var(--oxblood); color:#fff; padding:4px 9px; display:inline-block; margin:18px 0 2px; border-radius:2px}
+
   .moves{counter-reset:mv}
-  .move{margin:0 0 24px}
-  .move h4{font-size:19px; margin:0 0 6px; font-weight:700}
-  .move h4::before{counter-increment:mv; content:"Move 0" counter(mv) "  ·  "; font-family:ui-monospace,Menlo,monospace; font-size:13px; color:var(--faint); letter-spacing:.04em}
+  .move{margin:0 0 26px; padding-left:2px}
+  .move h4{font-size:20px; margin:0 0 7px; font-weight:700}
+  .move h4::before{counter-increment:mv; content:"Move 0" counter(mv); font-family:ui-monospace,Menlo,monospace; font-size:12px; color:#fff; background:var(--teal); padding:3px 8px; border-radius:2px; margin-right:11px; letter-spacing:.04em; position:relative; top:-3px}
+
   /* viz */
-  .viz{width:100%; height:430px; background:#fff; border:1px solid var(--hair); border-radius:4px; touch-action:none}
-  .viz-cap{font-size:13px; color:var(--faint); margin:8px 0 2px; font-family:ui-monospace,Menlo,monospace; letter-spacing:.03em}
-  .tip{position:fixed; pointer-events:none; background:var(--ink); color:#fff; font-family:ui-monospace,Menlo,monospace; font-size:12px; padding:6px 9px; border-radius:3px; opacity:0; transition:opacity .1s; z-index:50; max-width:240px; line-height:1.4}
-  .legend{font-family:ui-monospace,Menlo,monospace; font-size:11px; color:var(--faint); margin:8px 0 0; display:flex; flex-wrap:wrap; gap:14px}
+  .viz{width:100%; height:460px; background:#fcfbf8; border:1px solid var(--hair); border-radius:4px; touch-action:none; display:block}
+  .viz-cap{font-size:13px; color:var(--faint); margin:6px 0 8px; line-height:1.5}
+  .legend{font-family:ui-monospace,Menlo,monospace; font-size:11px; color:var(--faint); margin:9px 0 0; display:flex; flex-wrap:wrap; gap:15px; align-items:center}
   .legend span{display:inline-flex; align-items:center; gap:6px}
-  .dot{width:11px; height:11px; border-radius:50%; display:inline-block; border:1px solid var(--soft)}
-  /* footer */
-  .biblio{font-size:14px; line-height:1.5}
-  .biblio ol{padding-left:22px; margin:6px 0}
-  .biblio li{margin:0 0 8px}
+  .dot{width:12px; height:12px; border-radius:50%; display:inline-block; border:1px solid rgba(0,0,0,.25)}
+  .tip{position:fixed; pointer-events:none; background:var(--ink); color:var(--cream); font-family:ui-monospace,Menlo,monospace; font-size:12px; padding:8px 11px; border-radius:4px; opacity:0; transition:opacity .12s; z-index:60; max-width:260px; line-height:1.45; box-shadow:0 6px 24px rgba(0,0,0,.25)}
+  .tip b{color:#fff}
+
+  /* close band */
+  .close{
+    background:var(--ink); color:var(--cream); margin:54px calc(50% - 50vw) 0; width:100vw;
+    padding:64px calc(50vw - var(--maxw)/2);
+  }
+  .close .inner{max-width:var(--maxw); margin:0 auto}
+  .close .eyebrow{color:#d98b7f}
+  .close p{font-size:20px; line-height:1.6}
+  .close .sign{font-family:ui-monospace,Menlo,monospace; font-size:13px; color:#b9b2a4; margin-top:26px}
+  .close em{color:#fff; font-style:italic}
+
+  /* biblio */
+  .biblio{font-size:14px; line-height:1.5; color:var(--soft)}
+  .biblio ol{padding-left:22px; margin:8px 0}
+  .biblio li{margin:0 0 9px}
+  .biblio .v{color:var(--teal); font-family:ui-monospace,Menlo,monospace; font-size:11px}
+  .biblio .rv{color:var(--oxblood); font-family:ui-monospace,Menlo,monospace; font-size:11px}
   .note{font-size:13px; color:var(--faint); font-style:italic}
-  .sign{font-family:ui-monospace,Menlo,monospace; font-size:13px; color:var(--soft); margin-top:30px}
-  @media (max-width:520px){
-    body{font-size:17px} h1{font-size:31px} h3{font-size:22px}
-    .viz{height:360px}
+  hr{border:0; border-top:1px solid var(--rule); margin:42px 0}
+
+  @keyframes rise{from{opacity:0; transform:translateY(14px)} to{opacity:1; transform:none}}
+  section:nth-of-type(1){animation-delay:.05s}
+  section:nth-of-type(2){animation-delay:.12s}
+  @media (prefers-reduced-motion:reduce){section{animation:none}}
+  @media (max-width:540px){
+    body{font-size:17px} h1{font-size:33px} h3{font-size:23px}
+    .viz{height:380px} .close p{font-size:18px}
   }
   @media print{
-    details{break-inside:avoid} .viz{height:300px}
-    body{background:#fff}
+    details{break-inside:avoid; border-left-color:var(--rule)}
+    .viz{height:300px} body{background:#fff}
+    .close{background:#fff; color:#000; margin:40px 0 0; width:auto; padding:30px 0; border-top:2px solid #000}
+    .close .eyebrow,.close .sign{color:#555} .close em{color:#000}
   }
 </style>
 </head>
 <body>
 <div class="wrap">
 
-  <p class="eyebrow">Scripps Internal · Continuity &amp; Strategy · Working Draft</p>
-  <h1>What's happening to our science, and what's ours to do about it</h1>
-  <p class="standfirst">No single cut explains this moment. The method is attrition, the goal is a science that has been brought to heel, and the most dangerous thing it produces is a community that quiets itself before anyone tells it to. Here is the honest picture, and the moves available to each of us.</p>
-  <p class="byline">S.C.D. · Scripps Institution of Oceanography · Draft for internal discussion · June 2026</p>
+  <header class="mast">
+    <p class="eyebrow">Scripps Internal · Continuity &amp; Strategy</p>
+    <h1>What's happening to our science, and what's ours to do about it</h1>
+    <p class="standfirst">No single cut explains this moment. The method is attrition, the goal is a science brought to heel, and the most dangerous thing it produces is a community that quiets itself before anyone tells it to. Here is the honest picture, and the moves available to each of us.</p>
+    <p class="byline">S.C.D. · Scripps Institution of Oceanography · <b>Working Draft v.5</b> · for internal discussion · June 2026</p>
+  </header>
 
   <!-- 1 -->
-  <h2>01 · Why we're here</h2>
+  <section>
+  <div class="sechead"><span class="tile">01</span><span class="seclabel">Why we're here</span></div>
   <h3>This is not a budget incident</h3>
   <p class="lede">What's coming apart was never a law of nature. It was a bet placed in 1945, that the government would fund open-ended science and stay out of its way, under conditions that have all since flipped. Reading it as a funding fight misses the shape of it. The cuts are real, but the cut is not the danger. The cadence is.</p>
   <p>It happens by attrition, not announcement. A grant frozen here. A chapter quietly pulled from the manual federal judges use. A buoy not recovered. A mission line that simply goes missing from a budget. None of these is a headline on its own, and that is the point. Thirty stalled grants nobody will admit to do the work a single dramatic cancellation could never get away with. A rival state brings its science to heel with a memo. We are being walked toward the same place by a thousand small, deniable steps. At the national Stand Up for Science event on June 2, a former NOAA chief scientist put it plainly: the country is slipping behind China while it does this to itself.</p>
-  <p>The worst of it is not on any ledger. It is the chilling: people scrubbing words from proposals, declining to apply, choosing not to come, leaving early. A throttled and frightened community censors itself faster and cheaper than any rule could force it to. And the two things that don't grow back are the people, with the pattern recognition and instrument feel that lives in their hands, and the unbroken record. Those are the real casualties, and neither is restored by a later appropriation.</p>
+  <p>The worst of it is not on any ledger. It is the chilling: people scrubbing words from proposals, declining to apply, choosing not to come, leaving early. A throttled and frightened community censors itself faster and cheaper than any rule could force it to. The fear is rational, and we all want to hide. There's no shame in feeling it. But past a certain point the fear stops protecting anyone and starts doing the cutting for them, because the hiding is itself part of what hollows out the thing everyone is waiting to return to. Wait long enough and there may be no intact world left to come back to when you decide it's safe. The genuinely hard part is finding your own go/no-go line, the point where staying down costs more than standing up, and that line sits in a different place for every role. That is exactly what the matrix later in this document is for. And the two things that don't grow back are the people, with the pattern recognition and instrument feel that lives in their hands, and the unbroken record. Those are the real casualties, and neither is restored by a later appropriation.</p>
   <details>
     <summary>The longer version: the 1945 bargain and why it's coming due</summary>
     <div class="body">
       <p>The postwar compact was Vannevar Bush's design: government funds basic research and stays hands-off, on a promise deliberately left vague. It worked partly by accident, refugees, rubble elsewhere, and one good bet, not because the country was uniquely virtuous. Three conditions held it up: a sense of surplus, a Cold War reflex that funded science to stay ahead, and a science that mostly handed power new capability. All three have flipped. The surplus is treated as gone, the reflex faded after 1991, and science now often tells power what it cannot do. A body that can say the facts are otherwise is a rival authority, and that is what has become intolerable. The full argument lives in the <em>Build It Ourselves</em> essay; this document is the operational companion to it.</p>
     </div>
   </details>
+  </section>
 
   <!-- 2 -->
-  <h2>02 · Before we ask anything of you</h2>
+  <section>
+  <div class="sechead"><span class="tile">02</span><span class="seclabel">Before we ask anything of you</span></div>
   <h3>We red-teamed our own claim first</h3>
   <p>Nobody should act on an argument that hasn't been stress-tested, so we tested ours adversarially before bringing it to you. We built a rigid question battery on whether human-caused climate change is settled, and ran it through seven rival language models, including the one built to resist consensus. It didn't split. The skeptic came back at 92, the rest between 98 and 100. A failed falsification is the most respectable thing a claim can survive, so the question was never whether the science is real. It's why a country walks off the edge of a finding this airtight, and what the people who keep it alive do now.</p>
   <p>That same discipline runs through this whole document. Every factual claim below carries a checked link to a primary source. If a number here is wrong, it's on us, and you can see for yourself. Playing rigorous devil's advocate against our own case, and showing our sources, is not a side habit. It is the bulwark against the criticism we know is coming.</p>
@@ -133,37 +182,61 @@
       <p>The probe was a five-question JSON battery on the settledness of human-caused warming and the alignment of U.S. funding with that finding, run through seven models so that no single vendor's bias could carry the result. Grok, the built-in skeptic, returned 92 on settled-science confidence; the other six landed between 98 and 100. The design goal was falsification, not confirmation: we went looking for the flaw, and the claim held where the seam should have split. The same rule governs the bibliography at the foot of this page, every entry traceable, executive budget requests labeled as requests rather than enacted law.</p>
     </div>
   </details>
+  </section>
 
   <!-- 3 -->
-  <h2>03 · What only we can see</h2>
+  <section>
+  <div class="sechead"><span class="tile">03</span><span class="seclabel">What only we can see</span></div>
   <h3>Our knowledge is the leverage</h3>
   <p>The people in this building know things the budget writers do not, and that knowledge is not sentimental, it's strategic. Two examples show why.</p>
   <p><strong>The DSCOVR and Artemis paradox.</strong> The FY2027 NASA request cuts climate sensors as so-called alarmism. But DSCOVR, ACE, and SOHO sit a million miles out at the L1 point and provide the solar-storm warning that protects astronauts and the power grid. Cut them and you have not trimmed climate science, you have blinded the Artemis program the administration says it is prioritizing. The budget proves the contradiction in its own numbers: <a href="https://www.planetary.org/articles/analyzing-the-fy-2027-nasa-budget-request">Exploration is the only line that rises, by about 9 percent, while Science falls 46 percent</a>. An outsider sees an old satellite. An insider sees astronaut safety. That gap is the opening. You won't move a politician on a polar bear, but you will move one on a dead astronaut.</p>
   <p><strong>Insurance puts a dollar figure on the record.</strong> Markets already price what our instruments measure. Insurers set premiums off the historical observational record, and the U.S. market is buckling: <a href="https://theconversation.com/americans-face-an-insurability-crisis-as-climate-change-worsens-disasters-a-look-at-how-insurance-companies-set-rates-and-coverage-241772">seven property insurers went bankrupt in Florida in 2021 and 2022, insurers lost money on home coverage in 18 states in 2023, and major carriers have stopped writing new policies in wildfire-exposed California</a>. Degrade the sensors and you degrade the risk pricing the housing and mortgage economy runs on. This is the same fact in two languages. To us it's a time series. To a homeowner it's an uninsurable house.</p>
   <p>Stated in our own terms, two documents make the value concrete: the <a href="https://eos.org/features/the-looming-data-loss-that-threatens-public-safety-and-prosperity">Eos feature on the looming data loss that threatens public safety and prosperity</a> (Karl, Diggs, and colleagues), and the <a href="https://atlas.mindmup.com/usargodatausage/us_argo_float_data_operational_usage/index.html">U.S. Argo operational usage atlas</a>, which maps who actually leans on the floats every day.</p>
-  <details>
-    <summary>The NASA budget, as live physics: drag the directorates</summary>
-    <div class="body">
-      <p class="viz-cap">Bubble area is the FY2027 proposed amount. Shade is the change from FY2026: the darker the bubble, the deeper the cut. Drag them, watch them settle. Only one bubble is light. Source: The Planetary Society, FY2027 analysis.</p>
-      <svg id="budgetViz" class="viz"></svg>
-      <p class="legend">
-        <span><span class="dot" style="background:#fff"></span> increase</span>
-        <span><span class="dot" style="background:#bdbdbd"></span> moderate cut</span>
-        <span><span class="dot" style="background:#5a5a5a"></span> deep cut</span>
-        <span><span class="dot" style="background:#1a1a1a"></span> eliminated</span>
-      </p>
-    </div>
-  </details>
+  <p>There's a general rule underneath both examples. If a proposed budget cut appears to affect only one isolated thing, that appearance is the warning sign, not the justification. It almost certainly means the connections have not yet been mapped. The default assumption should be that any technical system in the federal portfolio is wired into more than is visible from a budget line item. The work of seeing those connections requires training, expertise, and time. The work of not seeing them requires only a spreadsheet.</p>
+  <p>None of this argues that missions or programs should never be terminated. Some terminations are appropriate. Some have completed their useful service, and some can be replaced or consolidated. But responsible termination requires accurately assessing the interdependencies and precisely calculating the impact. A cut made in the absence of that assessment is not a cut. It is a guess about what will happen, dressed up as a decision.</p>
   <details>
     <summary>The DSCOVR dependency fan-out: what one satellite holds up</summary>
     <div class="body">
-      <p>DSCOVR is the worked template from our nine-mission dependency analysis. From a single L1 spacecraft, the fan-out reaches: real-time solar-wind and geomagnetic-storm warning for the power grid and aviation; space-weather protection for crewed flight, the Artemis lane; the only operational full-disk Earth imaging from L1; and a continuous Earth radiation-budget record. The strategic point holds across all nine anchors (DSCOVR, CYGNSS, Aqua, OCO-2/3, SAGE-III, AMR-CR, ACE, SOHO, THEMIS-ARTEMIS): a cut sold as ideology is, on inspection, a cut to operational systems with names, users, and contractors. Responsible termination is defensible only if you can map the dependencies and price the impact. The point is that they have not.</p>
+      <p>DSCOVR is the worked template from our nine-mission dependency analysis. From a single L1 spacecraft, the fan-out reaches: real-time solar-wind and geomagnetic-storm warning for the power grid and aviation; space-weather protection for crewed flight, the Artemis lane; the only operational full-disk Earth imaging from L1; and a continuous Earth radiation-budget record. The strategic point holds across all nine anchors (DSCOVR, CYGNSS, Aqua, OCO-2/3, SAGE-III, AMR-CR, ACE, SOHO, THEMIS-ARTEMIS): a cut sold as ideology is, on inspection, a cut to operational systems with names, users, and contractors.</p>
     </div>
   </details>
+  <details>
+    <summary>Two kinds of readiness, side by side: what we pay per day</summary>
+    <div class="body">
+      <p>A comparison, not a judgment. Both national defense and the science agencies are forms of readiness the public pays for, and reasonable people can argue for more or less of any line in the federal budget without that being a moral position. The one evenhanded observation worth making is that the American public tends not to push back on either as a category of readiness spending.</p>
+      <p>By either accounting method, keeping America's fighter jets trained costs each citizen more per day than all of NOAA. Cost per flight hour has two legitimate definitions: the DoD's published reimbursable rate (marginal, lower) and full operating-and-support cost (GAO and CBO, higher). Across roughly 2,400 to 2,600 US combat jets in the Air Force, Navy, and Marines, at about 200 flight hours each per year, the fighter training program runs from about $10 billion a year at reimbursable rates to about $18 billion at full cost.</p>
+      <table class="matrix">
+        <thead><tr><th>Readiness we pay for</th><th>Annual cost</th><th>Per American per day</th></tr></thead>
+        <tbody>
+          <tr><td>US fighter training (reimbursable basis)</td><td>~$10B</td><td>~8 cents</td></tr>
+          <tr><td>US fighter training (full O&amp;S basis)</td><td>~$18B</td><td>~15 cents</td></tr>
+          <tr><td>All of NOAA (Spinrad)</td><td>~$7B</td><td>6 cents</td></tr>
+        </tbody>
+      </table>
+      <p>So all of NOAA, every forecast, satellite, buoy, and archive, costs about six cents per American per day, against eight to fifteen for the fighter fleet alone. The Army flies essentially no combat jets, so it adds nothing here, and this excludes bombers, tankers, the carriers, and everyone who isn't a pilot, so the readiness bill is conservative. The point is simply the scale: the cheaper of the two is the one that hands you a hurricane track you can act on. Per-flight-hour and inventory figures from the DoD Comptroller's FY2025 reimbursable rates, the GAO, the CBO, and service inventories; the Spinrad figure is his own, verified.</p>
+    </div>
+  </details>
+  </section>
 
   <!-- 4 -->
-  <h2>04 · Three live fronts</h2>
+  <section>
+  <div class="sechead"><span class="tile">04</span><span class="seclabel">Three live fronts</span></div>
   <h3>Three things are moving now, and one has a clock</h3>
+
+  <p>First, the shape of the whole request, as one picture. Every program this document discusses, sized by its annual dollars, green where a line is protected or rising and red where it is cut, with the depth of red tracking the size of the cut.</p>
+  <details open>
+    <summary>The FY2027 request as readiness: drag the circles</summary>
+    <div class="body">
+      <p class="viz-cap">A comparison, not a judgment. Size is annual dollars. Increases and maintained readiness float up in green, cuts sink down in red, with deeper red for deeper cuts. Each circle carries its signed percent change so it reads without color too. Defense is shown as its fighter-training readiness baseline for comparable scale; its full request sits in the tooltip. OOI has no clean FY27 line and is shown at minimum size, flagged as descope-driven.</p>
+      <svg id="budgetViz" class="viz"></svg>
+      <p class="legend">
+        <span><span class="dot" style="background:#2f6b4f"></span> protected / up</span>
+        <span><span class="dot" style="background:#e6b7ad"></span> smaller cut</span>
+        <span><span class="dot" style="background:#8A2B22"></span> deeper cut</span>
+        <span>size = annual dollars</span>
+      </p>
+    </div>
+  </details>
 
   <p><strong>OOI, the reality-adjustor.</strong> Be precise here, because precision is our credibility. The NSF Ocean Observatories Initiative descope is real and it's bad. But scheduled is not the same as done. As of now, nothing has been pulled from the water as a result of the descope. The first removal that is causally attributable to it, rather than predating it, is the final Endurance array buoy recovery, scheduled for around June 16. The honest, useful thing we can do is watch whether the recovery cruise actually pulls it, and separate what has been cut from what was already planned every time we speak. Then lobby with the real value, and note the two pressure points: the <a href="https://oceanobservatories.org/2026/05/announcement-on-ooi-descoping/">NSF cited a National Academies report to justify the descope, when that report had recommended continuing OOI</a>, and the National Science Board that would normally contest such a move had its oversight removed two weeks before the notification.</p>
   <details>
@@ -171,7 +244,7 @@
     <div class="body">
       <p><strong>Removal timeline.</strong> September 2025: Endurance northwest assets warehoused in Corvallis, predates the descope. Around June 16, 2026: final Oregon deep buoy, the first descope-caused removal. 2027: Pioneer (off North Carolina), Irminger Sea (off Greenland), Station Papa (Gulf of Alaska). The seafloor Regional Cabled Array is retained, spared only through 2028.</p>
       <p><strong>The NASEM inversion.</strong> NSF cited the 2025 Decadal Survey as partial justification; the National Academies then issued a formal statement correcting that use, because the report recommended improving OOI, not ending it. State it as documented chronology, not accusation.</p>
-      <p><strong>The oversight gap, calibrated.</strong> All National Science Board members were terminated two weeks before the descope notification, the firing of all 22 that Representative Judy Chu flagged at the June 2 national event. The honest frame is not "they fired the board to kill OOI." It is "they removed the oversight that could have contested any of these moves, then executed several." Systemic, and harder to dismiss than a single-target claim. Caution for any public use: the +163 percent ocean-heat-error figure from the Nature Climate Change paper applies to Argo, GO-SHIP, and XBT profiles, not to OOI moorings. Do not attach it to OOI.</p>
+      <p><strong>The oversight gap, calibrated.</strong> All National Science Board members were terminated two weeks before the descope notification, the firing of all 22 that Representative Judy Chu flagged at the June 2 national event. The honest frame is not "they fired the board to kill OOI." It is "they removed the oversight that could have contested any of these moves, then executed several." Caution for any public use: the +163 percent ocean-heat-error figure from the Nature Climate Change paper applies to Argo, GO-SHIP, and XBT profiles, not to OOI moorings. Do not attach it to OOI.</p>
     </div>
   </details>
   <details>
@@ -206,9 +279,11 @@
       <p>Subjective analytic judgments for prioritization over the next 18 to 24 months, not statistical forecasts. IOOS regional observations: high, around 70 percent, the leaked FY26 passback proposed eliminating them outright. NESDIS "neutrality" mandate: medium-high, around 55 percent, a direct threat to data integrity and our preservation lane. OOI Regional Cabled Array: medium, around 40 percent, the obvious next OOI target once the moored arrays are gone. NWS commercialization and NCEI archives: medium. U.S. Argo and GO-SHIP funding: lower near-term but the highest-impact of all, since that is the actual global ocean-heat backbone.</p>
     </div>
   </details>
+  </section>
 
   <!-- 5 -->
-  <h2>05 · The three moves</h2>
+  <section>
+  <div class="sechead"><span class="tile">05</span><span class="seclabel">The three moves</span></div>
   <h3>What the strategy actually is</h3>
   <p>Three moves, updated for everything we've learned this spring. They work whether the eventual outcome is a rebuilt federal model or a globally federated one.</p>
   <div class="moves">
@@ -222,25 +297,27 @@
     </div>
     <div class="move">
       <h4>Keep the record</h4>
-      <p>Mirror the archives, capture the knowledge before the people walk out the door, and baseline what exists now. A dataset preserved without the expertise that produces and interprets it is a fossil, so knowledge capture is a first-class job, not a byproduct of hiring. The one failure no later budget can ever undo is a broken time series. This is where our distinctive assets earn their keep: the Keeling Curve, the WOCE and GO-SHIP legacy, the <a href="https://sdiggs.github.io/rstar-calculator/">R* triage framework</a>, and the data-stewardship network below.</p>
+      <p>Mirror the archives, capture the knowledge before the people walk out the door, and baseline what exists now. A dataset preserved without the expertise that produces and interprets it is a fossil, so knowledge capture is a first-class job, not a byproduct of hiring. The one failure no later budget can ever undo is a broken time series. This is where our distinctive assets earn their keep: the Keeling Curve, the WOCE and GO-SHIP legacy, the <a href="https://sdiggs.github.io/rstar-calculator/">R* triage framework</a>, and the stewardship network below.</p>
     </div>
   </div>
   <details>
-    <summary>The data-rescue landscape: who holds what up (drag, and click a node)</summary>
+    <summary>The data-rescue landscape: hover a node to see how it connects</summary>
     <div class="body">
-      <p class="viz-cap">A schematic of the stewardship network: federal sources, the preservers and repositories that mirror them, the coordinating bodies, and Scripps at the hub. Drag nodes to pull the web around; click one to see what it connects to. Representative for this draft, to be wired to the authoritative knowledge graph.</p>
+      <p class="viz-cap">The stewardship network behind "keep the record": federal sources, the preservers and repositories that mirror them, the coordinating bodies, and Scripps at the hub. Hover or tap any node for what it is and how it connects. First-draft relationships, drawn from the stewardship landscape, for correction rather than authoritative.</p>
       <svg id="netViz" class="viz"></svg>
       <p class="legend">
-        <span><span class="dot" style="background:#1a1a1a"></span> federal source</span>
-        <span><span class="dot" style="background:#6b6b6b"></span> preserver / repository</span>
-        <span><span class="dot" style="background:#a8a8a8"></span> coordinating body</span>
-        <span><span class="dot" style="background:#fff"></span> Scripps hub</span>
+        <span><span class="dot" style="background:#8A2B22"></span> federal source</span>
+        <span><span class="dot" style="background:#1F5D57"></span> preserver / repository</span>
+        <span><span class="dot" style="background:#b9b2a4"></span> coordinating body</span>
+        <span><span class="dot" style="background:#1B1A16"></span> Scripps &amp; its assets</span>
       </p>
     </div>
   </details>
+  </section>
 
   <!-- 6 -->
-  <h2>06 · What's yours to do</h2>
+  <section>
+  <div class="sechead"><span class="tile">06</span><span class="seclabel">What's yours to do</span></div>
   <h3>Find your row</h3>
   <p>The menu is not uniform, and that is the design, not a flaw. Those with the most cover take the most public risk. Those with the least do the work that needs no visibility. International scholars and probationary staff are never asked to put their status on the line.</p>
   <div class="rail">The institution and its tenured members put theirs on the line on behalf of those who cannot. For our visa-holding colleagues, protection is owed, not asked for. This sentence belongs in leadership communications, not only here.</div>
@@ -262,7 +339,7 @@
     </div>
   </details>
 
-  <h2>Where to plug in</h2>
+  <h2 style="font-size:13px;font-family:ui-monospace,Menlo,monospace;letter-spacing:.16em;text-transform:uppercase;color:var(--faint);margin:40px 0 4px">Where to plug in</h2>
   <p>Three live channels for this effort. The first two are placeholders until the URLs are set.</p>
   <table class="matrix">
     <tbody>
@@ -272,40 +349,46 @@
     </tbody>
   </table>
   <p class="note">Community writing party: tentative hold for June 17 at Martin Johnson House. Scope and agenda TBD.</p>
-
-  <hr>
-
-  <!-- close -->
-  <h2>The footing</h2>
-  <p>The Keeling Curve has run unbroken since 1958 because someone kept measuring through every administration that came and went. That is both the standard and the proof. We are not fighting an eternal flaw in human nature. We are managing the lag between when people stop believing the readout and when the readout collects what it is owed, and reality is a slow, patient enforcer that never changes sides. The ocean keeps warming whether or not anyone funds the measuring of it. Our job is to keep measuring, keep the record, and make every quiet step toward a tamer science expensive enough that it isn't worth taking. We've done the hard part before. We do it again now.</p>
-  <p class="sign">S.C.D.</p>
-
-  <hr>
+  </section>
 
   <!-- biblio -->
-  <h2>Sources, checked</h2>
+  <section>
+  <hr>
+  <h2 style="font-size:13px;font-family:ui-monospace,Menlo,monospace;letter-spacing:.16em;text-transform:uppercase;color:var(--faint);margin:30px 0 4px">Sources, checked</h2>
   <div class="biblio">
     <ol>
-      <li>The Planetary Society, "The FY 2027 NASA budget request" (Casey Dreier, Apr 23 2026). <a href="https://www.planetary.org/articles/analyzing-the-fy-2027-nasa-budget-request">link</a> · verified</li>
-      <li>The Planetary Society, "Save NASA Science" action hub. <a href="https://www.planetary.org/save-nasa-science">link</a> · verified</li>
-      <li>The Conversation US, "Americans face an insurability crisis…" (Hoffman). <a href="https://theconversation.com/americans-face-an-insurability-crisis-as-climate-change-worsens-disasters-a-look-at-how-insurance-companies-set-rates-and-coverage-241772">link</a> · verified</li>
-      <li>SpaceNews, "White House again proposes steep NASA budget cuts" (Apr 3 2026). <a href="https://spacenews.com/white-house-again-proposes-steep-nasa-budget-cuts/">link</a> · verified</li>
-      <li>Federal Register, OMB Federal Financial Assistance Rule, docket OMB-2026-0034. <a href="https://www.federalregister.gov/public-inspection/2026-10817/regulation-for-federal-financial-assistance">link</a> · verified</li>
-      <li>Elizabeth Ginexi, summary of key changes in the OMB proposed rule. <a href="https://elizabethginexi.substack.com/p/summary-of-key-changes-in-ombs-proposed">link</a> · verified</li>
-      <li>Stand Up for Science, public comment campaign. <a href="https://fight2win.standupforscience.net/campaign/163675/">link</a> · verified</li>
-      <li>Eos, "The looming data loss that threatens public safety and prosperity" (Karl, Diggs, et al.). <a href="https://eos.org/features/the-looming-data-loss-that-threatens-public-safety-and-prosperity">link</a> · verified</li>
-      <li>The Economist, "Donald Trump's war on climate science…" (Ralph Keeling, invited). <a href="https://www.economist.com/by-invitation/2025/07/30/donald-trumps-war-on-climate-science-has-staggering-implications">link</a> · verified</li>
-      <li>The Guardian, climate crisis on track to destroy capitalism (Allianz warning). <a href="https://www.theguardian.com/environment/2025/apr/03/climate-crisis-on-track-to-destroy-capitalism-warns-allianz-insurer">link</a> · verified</li>
-      <li>U.S. Argo float data operational usage atlas. <a href="https://atlas.mindmup.com/usargodatausage/us_argo_float_data_operational_usage/index.html">link</a> · verified</li>
-      <li>CNN, "Researchers say this new Trump rule could destroy American science…" (Nilsen &amp; Freedman, Jun 4 2026). <a href="https://edition.cnn.com/2026/06/04/climate/trump-omb-funding-rule-climate-science">link</a> · re-verify</li>
-      <li>regulations.gov comment portal, docket OMB-2026-0034. <a href="https://www.regulations.gov/docket/OMB-2026-0034">link</a> · confirm exact docket URL</li>
-      <li>OOI descoping announcement (May 21 2026). <a href="https://oceanobservatories.org/2026/05/announcement-on-ooi-descoping/">link</a> · re-verify</li>
-      <li>Project 2025, Mandate for Leadership. <a href="https://www.project2025.org/">link</a> · re-verify live URL</li>
-      <li>R* Composite Priority Index calculator. <a href="https://sdiggs.github.io/rstar-calculator/">link</a> · re-verify</li>
+      <li>The Planetary Society, FY 2027 NASA budget request (Dreier, Apr 23 2026). <a href="https://www.planetary.org/articles/analyzing-the-fy-2027-nasa-budget-request">link</a> <span class="v">verified</span></li>
+      <li>The Planetary Society, "Save NASA Science" hub. <a href="https://www.planetary.org/save-nasa-science">link</a> <span class="v">verified</span></li>
+      <li>The Conversation US, "Americans face an insurability crisis…" (Hoffman). <a href="https://theconversation.com/americans-face-an-insurability-crisis-as-climate-change-worsens-disasters-a-look-at-how-insurance-companies-set-rates-and-coverage-241772">link</a> <span class="v">verified</span></li>
+      <li>NSF FY27 analysis, topline $8.75B to $3.96B (CRA / AAS / FABBS). <a href="https://cra.org/govaffairs/blog/2026/04/nsf-fy2027-pbr/">link</a> <span class="v">verified</span></li>
+      <li>NOAA FY27 cut of ~$1.6B and OAR elimination (AIP FYI). <a href="https://www.aip.org/fyi/lawmakers-warn-proposed-noaa-budget-cuts-would-gut-research-undermine-forecasting">link</a> <span class="v">verified</span></li>
+      <li>Defense request $1.5T, +44% (Eos topline; UW Federal Relations). <a href="https://eos.org/research-and-developments/fy2027-budget-request-slashes-billions-in-science-funding">link</a> <span class="v">verified</span></li>
+      <li>DoD Comptroller FY2025 reimbursable flight-hour rates. <a href="https://comptroller.war.gov/Portals/45/documents/rates/fy2025/2025_b_c.pdf">link</a> <span class="v">verified</span></li>
+      <li>Federal Register, OMB rule, docket OMB-2026-0034. <a href="https://www.federalregister.gov/public-inspection/2026-10817/regulation-for-federal-financial-assistance">link</a> <span class="v">verified</span></li>
+      <li>Ginexi, summary of key changes in the OMB rule. <a href="https://elizabethginexi.substack.com/p/summary-of-key-changes-in-ombs-proposed">link</a> <span class="v">verified</span></li>
+      <li>Stand Up for Science, comment campaign. <a href="https://fight2win.standupforscience.net/campaign/163675/">link</a> <span class="v">verified</span></li>
+      <li>Eos, "The looming data loss…" (Karl, Diggs, et al.). <a href="https://eos.org/features/the-looming-data-loss-that-threatens-public-safety-and-prosperity">link</a> <span class="v">verified</span></li>
+      <li>U.S. Argo operational usage atlas. <a href="https://atlas.mindmup.com/usargodatausage/us_argo_float_data_operational_usage/index.html">link</a> <span class="v">verified</span></li>
+      <li>CNN, OMB rule (Nilsen &amp; Freedman, Jun 4 2026). <a href="https://edition.cnn.com/2026/06/04/climate/trump-omb-funding-rule-climate-science">link</a> <span class="rv">re-verify</span></li>
+      <li>OOI descoping announcement (May 21 2026). <a href="https://oceanobservatories.org/2026/05/announcement-on-ooi-descoping/">link</a> <span class="rv">re-verify</span></li>
+      <li>Project 2025, Mandate for Leadership. <a href="https://www.project2025.org/">link</a> <span class="rv">re-verify</span></li>
+      <li>regulations.gov comment portal, docket OMB-2026-0034. <a href="https://www.regulations.gov/docket/OMB-2026-0034">link</a> <span class="rv">confirm</span></li>
+      <li>R* Composite Priority Index calculator. <a href="https://sdiggs.github.io/rstar-calculator/">link</a> <span class="rv">re-verify</span></li>
     </ol>
-    <p class="note">Link audit: items marked "verified" were confirmed live this session or carried from the June 2 meeting resource list. Items marked "re-verify" or "confirm" need a click-through pass before this goes on GitHub. Per the rule that everything linkable must be linked and checked, none of those should ship unconfirmed, and the two channel stubs above need their live URLs.</p>
+    <p class="note">Link audit: "verified" confirmed live this session or from the June 2 meeting resource list. "Re-verify" and "confirm" need a click-through before this goes on GitHub, along with the two channel stubs' live URLs.</p>
   </div>
+  </section>
 
+</div>
+
+<!-- close band -->
+<div class="close">
+  <div class="inner">
+    <p class="eyebrow">The footing</p>
+    <p>The Keeling Curve has run unbroken since 1958 because someone kept measuring through every administration that came and went. That is both the standard and the proof. We are not fighting an eternal flaw in human nature. We are managing the lag between when people stop believing the readout and when the readout collects what it is owed, and reality is a slow, patient enforcer that never changes sides.</p>
+    <p>The ocean keeps warming whether or not anyone funds the measuring of it. Our job is to keep measuring, keep the record, and make every quiet step toward a tamer science expensive enough that it isn't worth taking. <em>We've done the hard part before. We do it again now.</em></p>
+    <p class="sign">S.C.D.</p>
+  </div>
 </div>
 
 <div class="tip" id="tip"></div>
@@ -313,15 +396,23 @@
 <script>
 (function(){
   var tip = document.getElementById('tip');
-  function showTip(html, x, y){ tip.innerHTML = html; tip.style.opacity = 1; tip.style.left = (x+14)+'px'; tip.style.top = (y+14)+'px'; }
+  function showTip(html, x, y){
+    tip.innerHTML = html; tip.style.opacity = 1;
+    var nx = x + 16, ny = y + 16;
+    if (nx > window.innerWidth - 270) nx = x - 270;
+    tip.style.left = nx + 'px'; tip.style.top = ny + 'px';
+  }
   function hideTip(){ tip.style.opacity = 0; }
 
-  // shade a cut percentage to grayscale: +9 -> white, -100 -> near black
-  function cutShade(pct){
-    if (pct > 0) return '#ffffff';
-    var t = Math.min(1, Math.abs(pct)/100);      // 0..1
-    var v = Math.round(210 - t*195);              // 210 -> 15
-    return 'rgb('+v+','+v+','+v+')';
+  function fillFor(d){
+    if (d.baseline) return '#3f7d63';
+    if (d.pct > 0) return d3.interpolateRgb('#cfe3d6', '#2f6b4f')(Math.min(1, d.pct/60));
+    return d3.interpolateRgb('#f0cdc6', '#8A2B22')(Math.min(1, Math.abs(d.pct)/100));
+  }
+  function deep(d){
+    if (d.baseline) return true;
+    if (d.pct > 0) return Math.min(1, d.pct/60) > 0.55;
+    return Math.min(1, Math.abs(d.pct)/100) > 0.45;
   }
 
   // ---------- BUDGET BUBBLES ----------
@@ -330,63 +421,77 @@
     if (budgetDone) return; budgetDone = true;
     var svg = d3.select('#budgetViz');
     var W = svg.node().clientWidth, H = svg.node().clientHeight;
-    svg.attr('viewBox', '0 0 '+W+' '+H);
+    svg.attr('viewBox', '0 0 ' + W + ' ' + H);
+    // dollars in $M; pct = change vs FY26; baseline = standing readiness cost
     var data = [
-      {name:'Exploration', fy26:7783, fy27:8513.9, pct:9},
-      {name:'Science', fy26:7250, fy27:3893.9, pct:-46},
-      {name:'Space Operations', fy26:4175, fy27:3047.2, pct:-27},
-      {name:'Space Technology', fy26:920.5, fy27:624.3, pct:-32},
-      {name:'Aeronautics', fy26:935, fy27:609.5, pct:-35},
-      {name:'STEM Engagement', fy26:143, fy27:0, pct:-100}
+      {name:'Defense readiness', usd:13000, pct:0, baseline:true,
+       tip:'Fighter-jet training readiness, ~$10-18B/yr. Full FY27 defense request is $1.5 trillion, +44%. Comparison, not judgment: both defense and science are readiness the public accepts.'},
+      {name:'NASA Exploration', usd:8514, pct:9, tip:'$8.51B, up 9% from FY26.'},
+      {name:'NOAA', usd:4600, pct:-26, tip:'~$4.6B, down ~$1.6B (~26%). OAR research arm proposed for elimination.'},
+      {name:'NSF', usd:3960, pct:-55, tip:'$3.96B, down 55% from $8.75B. R&RA research account roughly halved.'},
+      {name:'NASA Science', usd:3894, pct:-47, tip:'~$3.8B, down 47%. Heliophysics, the DSCOVR/ACE/SOHO lane, down 52%.'},
+      {name:'OOI', usd:8, pct:-80, descope:true, tip:'No clean FY27 line. Shown at minimum size; descope cuts operations from ~$39M toward ~$8M.'}
     ];
-    var maxV = d3.max(data, function(d){return d.fy27;});
-    var rScale = d3.scaleSqrt().domain([0, maxV]).range([12, Math.min(W,H)*0.21]);
-    data.forEach(function(d){ d.r = Math.max(13, rScale(d.fy27)); });
+    var maxV = d3.max(data, function(d){ return d.usd; });
+    var rScale = d3.scaleSqrt().domain([0, maxV]).range([16, Math.min(W, H) * 0.205]);
+    data.forEach(function(d){ d.r = Math.max(16, rScale(d.usd)); });
+
+    var upY = H * 0.34, downY = H * 0.66;
+    function targetY(d){ return (d.pct > 0 || d.baseline) ? upY : downY; }
 
     var sim = d3.forceSimulation(data)
-      .force('charge', d3.forceManyBody().strength(5))
-      .force('center', d3.forceCenter(W/2, H/2))
-      .force('x', d3.forceX(W/2).strength(0.05))
-      .force('y', d3.forceY(H/2).strength(0.07))
-      .force('collide', d3.forceCollide().radius(function(d){return d.r+3;}).iterations(2));
+      .force('x', d3.forceX(W/2).strength(0.045))
+      .force('y', d3.forceY(targetY).strength(0.11))
+      .force('charge', d3.forceManyBody().strength(4))
+      .force('collide', d3.forceCollide().radius(function(d){ return d.r + 3; }).iterations(2));
 
-    var g = svg.selectAll('g.b').data(data).enter().append('g').attr('class','b').style('cursor','grab');
+    // baseline divider hint
+    svg.append('line').attr('x1', 0).attr('x2', W).attr('y1', H/2).attr('y2', H/2)
+      .attr('stroke', '#e4e0d6').attr('stroke-dasharray', '3 5');
+    svg.append('text').attr('x', 10).attr('y', H*0.5 - 8)
+      .style('font-family', 'ui-monospace,Menlo,monospace').style('font-size', '10px')
+      .style('fill', '#b9b2a4').text('up / protected');
+    svg.append('text').attr('x', 10).attr('y', H*0.5 + 16)
+      .style('font-family', 'ui-monospace,Menlo,monospace').style('font-size', '10px')
+      .style('fill', '#b9b2a4').text('cut');
+
+    var g = svg.selectAll('g.b').data(data).enter().append('g').attr('class', 'b').style('cursor', 'grab');
     g.append('circle')
-      .attr('r', function(d){return d.r;})
-      .attr('fill', function(d){return cutShade(d.pct);})
-      .attr('stroke', '#1a1a1a')
-      .attr('stroke-width', function(d){return d.pct>0 ? 2 : 1;});
+      .attr('r', function(d){ return d.r; })
+      .attr('fill', fillFor)
+      .attr('stroke', function(d){ return d.baseline ? '#1F5D57' : '#1B1A16'; })
+      .attr('stroke-width', function(d){ return d.baseline ? 2 : 1; })
+      .attr('stroke-dasharray', function(d){ return d.descope ? '3 3' : null; });
     g.append('text')
-      .attr('text-anchor','middle').attr('dy','-1px')
-      .style('font-family','ui-monospace,Menlo,monospace')
-      .style('font-size','10px')
-      .style('fill', function(d){return d.pct < -38 ? '#fff' : '#1a1a1a';})
-      .style('pointer-events','none')
+      .attr('text-anchor', 'middle')
+      .style('font-family', 'ui-monospace,Menlo,monospace')
+      .style('pointer-events', 'none')
+      .style('fill', function(d){ return deep(d) ? '#F1ECE2' : '#1B1A16'; })
       .each(function(d){
         var t = d3.select(this);
-        if (d.r < 26) return;
-        t.append('tspan').attr('x',0).text(d.name.length>14 ? d.name.split(' ')[0] : d.name);
-        t.append('tspan').attr('x',0).attr('dy','13px').style('font-size','12px')
-          .text((d.pct>0?'+':'')+d.pct+'%');
+        if (d.r < 24){ return; }
+        var label = d.name.length > 15 ? d.name.split(' ')[0] : d.name;
+        t.append('tspan').attr('x', 0).attr('dy', '-1px').style('font-size', '10px').text(label);
+        t.append('tspan').attr('x', 0).attr('dy', '13px').style('font-size', '12px')
+          .text(d.baseline ? 'readiness' : ((d.pct > 0 ? '+' : '') + d.pct + '%'));
       });
 
-    g.on('mousemove', function(ev,d){
-        showTip('<b>'+d.name+'</b><br>FY26 $'+d.fy26.toLocaleString()+'M<br>FY27 $'+d.fy27.toLocaleString()+'M<br>'+(d.pct>0?'+':'')+d.pct+'%', ev.clientX, ev.clientY);
-      })
-      .on('mouseleave', hideTip);
+    g.on('mousemove', function(ev, d){ showTip('<b>' + d.name + '</b><br>' + d.tip, ev.clientX, ev.clientY); })
+     .on('mouseleave', hideTip)
+     .on('click', function(ev, d){ showTip('<b>' + d.name + '</b><br>' + d.tip, ev.clientX, ev.clientY); ev.stopPropagation(); });
 
     sim.on('tick', function(){
       g.attr('transform', function(d){
-        d.x = Math.max(d.r, Math.min(W-d.r, d.x));
-        d.y = Math.max(d.r, Math.min(H-d.r, d.y));
-        return 'translate('+d.x+','+d.y+')';
+        d.x = Math.max(d.r, Math.min(W - d.r, d.x));
+        d.y = Math.max(d.r + 4, Math.min(H - d.r - 4, d.y));
+        return 'translate(' + d.x + ',' + d.y + ')';
       });
     });
 
     var drag = d3.drag()
-      .on('start', function(ev,d){ if(!ev.active) sim.alphaTarget(0.3).restart(); d.fx=d.x; d.fy=d.y; })
-      .on('drag', function(ev,d){ d.fx=ev.x; d.fy=ev.y; })
-      .on('end', function(ev,d){ if(!ev.active) sim.alphaTarget(0); d.fx=null; d.fy=null; });
+      .on('start', function(ev, d){ if (!ev.active) sim.alphaTarget(0.3).restart(); d.fx = d.x; d.fy = d.y; })
+      .on('drag', function(ev, d){ d.fx = ev.x; d.fy = ev.y; })
+      .on('end', function(ev, d){ if (!ev.active) sim.alphaTarget(0); d.fx = null; d.fy = null; });
     g.call(drag);
   }
 
@@ -396,86 +501,106 @@
     if (netDone) return; netDone = true;
     var svg = d3.select('#netViz');
     var W = svg.node().clientWidth, H = svg.node().clientHeight;
-    svg.attr('viewBox','0 0 '+W+' '+H);
-    // group: 0 federal source, 1 preserver, 2 coordinator, 3 scripps hub
+    svg.attr('viewBox', '0 0 ' + W + ' ' + H);
+    // g: 0 federal source, 1 preserver, 2 coordinator, 3 scripps/asset
     var nodes = [
-      {id:'Scripps / SIO', g:3, r:22},
-      {id:'NOAA', g:0}, {id:'NASA', g:0}, {id:'NSF', g:0}, {id:'USGS', g:0}, {id:'USDA', g:0},
-      {id:'NODD', g:1}, {id:'Dryad', g:1}, {id:'NYCE', g:1}, {id:'KCF', g:1}, {id:'ETH Zurich', g:1},
-      {id:'ESIP', g:2}, {id:'RDA', g:2}, {id:'IODE', g:2}, {id:'AGU', g:2},
-      {id:'GO-SHIP', g:3}, {id:'Keeling Curve', g:3}, {id:'World Ocean DB', g:3}
+      {id:'Scripps / SIO', g:3, r:22, rel:'The hub. Produces ocean and climate records, trains the people who run them, and links federal sources to the preservers and coordinating bodies.'},
+      {id:'NOAA', g:0, rel:'Primary federal source for weather, ocean, and climate data. Its OAR research arm is proposed for elimination in the FY27 request.'},
+      {id:'NASA', g:0, rel:'Federal source for satellite Earth observation. Many of its climate sensors are proposed for termination in FY27.'},
+      {id:'NSF', g:0, rel:'Funds OOI and much university research. The FY27 request would cut it 55%.'},
+      {id:'USGS', g:0, rel:'Federal source for streamflow, water, and ecosystem data.'},
+      {id:'USDA', g:0, rel:'Federal source for agricultural and soil data feeding the food-system value chain.'},
+      {id:'NODD', g:1, rel:'NOAA Open Data Dissemination mirrors federal holdings to the cloud. The technical channel for NOAA data.'},
+      {id:'Dryad', g:1, rel:'Public repository used to mirror federal datasets for open access.'},
+      {id:'NYCE', g:1, rel:'New York Climate Exchange. Running a public mirroring pilot of NASA, NOAA, USGS, and USDA datasets via Dryad.'},
+      {id:'KCF', g:1, rel:'Keeling Curve Foundation. Stewards the continuous CO2 record and coordinates data-continuity work with SIO.'},
+      {id:'ETH Zurich', g:1, rel:'International partner mirroring NASA Earthdata holdings. Works with NYCE and NODD.'},
+      {id:'ESIP', g:2, rel:'Earth Science Information Partners. Standards and community coordination across producers and stewards.'},
+      {id:'RDA', g:2, rel:'Research Data Alliance. International data-infrastructure governance and interoperability.'},
+      {id:'IODE', g:2, rel:'IOC International Oceanographic Data and Information Exchange. Global ocean-data coordination.'},
+      {id:'GO-SHIP', g:3, rel:'Global ship-based hydrography. A core SIO legacy producing the deep-ocean reference record.'},
+      {id:'Keeling Curve', g:3, rel:'The unbroken atmospheric CO2 record since 1958. The emblem of continuous measurement, stewarded with KCF.'},
+      {id:'World Ocean DB', g:3, rel:'NOAA global ocean profile database. A key community resource fed by programs like GO-SHIP.'}
     ];
-    var links = [
+    var L = [
       ['Scripps / SIO','NOAA'],['Scripps / SIO','NASA'],['Scripps / SIO','NSF'],
       ['Scripps / SIO','KCF'],['Scripps / SIO','NYCE'],['Scripps / SIO','ESIP'],
       ['Scripps / SIO','RDA'],['Scripps / SIO','IODE'],['Scripps / SIO','GO-SHIP'],
       ['KCF','Keeling Curve'],['KCF','NOAA'],['NYCE','Dryad'],['NYCE','ETH Zurich'],
-      ['NODD','NOAA'],['ETH Zurich','NODD'],['ESIP','NOAA'],['AGU','Scripps / SIO'],
+      ['NODD','NOAA'],['ETH Zurich','NODD'],['ESIP','NOAA'],
       ['World Ocean DB','NOAA'],['GO-SHIP','World Ocean DB'],['Dryad','NSF'],
-      ['USGS','Scripps / SIO'],['USDA','NODD'],['Keeling Curve','Scripps / SIO']
-    ].map(function(l){return {source:l[0], target:l[1]};});
-
-    var shade = ['#1a1a1a','#6b6b6b','#a8a8a8','#ffffff'];
-    nodes.forEach(function(n){ if(!n.r) n.r = 13; });
+      ['USGS','Scripps / SIO'],['USDA','NODD'],['Keeling Curve','Scripps / SIO'],['NYCE','NASA']
+    ];
+    var links = L.map(function(l){ return {source:l[0], target:l[1]}; });
+    var shade = ['#8A2B22', '#1F5D57', '#b9b2a4', '#1B1A16'];
+    nodes.forEach(function(n){ if (!n.r) n.r = 13; });
 
     var sim = d3.forceSimulation(nodes)
-      .force('link', d3.forceLink(links).id(function(d){return d.id;}).distance(72).strength(0.6))
-      .force('charge', d3.forceManyBody().strength(-230))
+      .force('link', d3.forceLink(links).id(function(d){ return d.id; }).distance(74).strength(0.55))
+      .force('charge', d3.forceManyBody().strength(-250))
       .force('center', d3.forceCenter(W/2, H/2))
-      .force('collide', d3.forceCollide().radius(function(d){return d.r+10;}));
+      .force('collide', d3.forceCollide().radius(function(d){ return d.r + 11; }));
 
-    var link = svg.append('g').attr('stroke','#cfccc6').attr('stroke-width',1)
+    var link = svg.append('g').attr('stroke', '#d8d2c4').attr('stroke-width', 1)
       .selectAll('line').data(links).enter().append('line');
 
-    var node = svg.append('g').selectAll('g').data(nodes).enter().append('g').style('cursor','grab');
+    var node = svg.append('g').selectAll('g').data(nodes).enter().append('g').style('cursor', 'grab');
     node.append('circle')
-      .attr('r', function(d){return d.r;})
-      .attr('fill', function(d){return shade[d.g];})
-      .attr('stroke','#1a1a1a').attr('stroke-width', function(d){return d.g===3?2:1;});
+      .attr('r', function(d){ return d.r; })
+      .attr('fill', function(d){ return shade[d.g]; })
+      .attr('stroke', '#1B1A16').attr('stroke-width', function(d){ return d.g === 3 ? 2 : 1; });
     node.append('text')
-      .text(function(d){return d.id;})
-      .attr('text-anchor','middle').attr('dy', function(d){return d.r+13;})
-      .style('font-family','ui-monospace,Menlo,monospace').style('font-size','10px')
-      .style('fill','#444').style('pointer-events','none');
+      .text(function(d){ return d.id; })
+      .attr('text-anchor', 'middle').attr('dy', function(d){ return d.r + 13; })
+      .style('font-family', 'ui-monospace,Menlo,monospace').style('font-size', '10px')
+      .style('fill', '#4C4840').style('pointer-events', 'none');
 
-    function neighbors(id){
-      var s = {}; s[id]=true;
+    function nbrs(id){
+      var s = {}; s[id] = true;
       links.forEach(function(l){
-        if(l.source.id===id) s[l.target.id]=true;
-        if(l.target.id===id) s[l.source.id]=true;
+        if (l.source.id === id) s[l.target.id] = true;
+        if (l.target.id === id) s[l.source.id] = true;
       });
       return s;
     }
-    node.on('click', function(ev,d){
-      var s = neighbors(d.id);
-      node.style('opacity', function(n){return s[n.id]?1:0.18;});
-      link.style('stroke', function(l){return (l.source.id===d.id||l.target.id===d.id)?'#1a1a1a':'#e0ddd7';})
-          .style('stroke-width', function(l){return (l.source.id===d.id||l.target.id===d.id)?1.6:1;});
-      ev.stopPropagation();
-    });
-    svg.on('click', function(){ node.style('opacity',1); link.style('stroke','#cfccc6').style('stroke-width',1); });
+    function focus(d, ev){
+      var s = nbrs(d.id);
+      node.style('opacity', function(n){ return s[n.id] ? 1 : 0.16; });
+      link.attr('stroke', function(l){ return (l.source.id === d.id || l.target.id === d.id) ? '#8A2B22' : '#e4e0d6'; })
+          .attr('stroke-width', function(l){ return (l.source.id === d.id || l.target.id === d.id) ? 1.8 : 1; });
+      showTip('<b>' + d.id + '</b><br>' + d.rel, ev.clientX, ev.clientY);
+    }
+    function unfocus(){
+      node.style('opacity', 1);
+      link.attr('stroke', '#d8d2c4').attr('stroke-width', 1);
+      hideTip();
+    }
+    node.on('mousemove', function(ev, d){ focus(d, ev); })
+        .on('mouseleave', unfocus)
+        .on('click', function(ev, d){ focus(d, ev); ev.stopPropagation(); });
+    svg.on('click', unfocus);
 
     sim.on('tick', function(){
       nodes.forEach(function(d){
-        d.x = Math.max(d.r, Math.min(W-d.r, d.x));
-        d.y = Math.max(d.r+4, Math.min(H-d.r-12, d.y));
+        d.x = Math.max(d.r, Math.min(W - d.r, d.x));
+        d.y = Math.max(d.r + 4, Math.min(H - d.r - 12, d.y));
       });
-      link.attr('x1',function(l){return l.source.x;}).attr('y1',function(l){return l.source.y;})
-          .attr('x2',function(l){return l.target.x;}).attr('y2',function(l){return l.target.y;});
-      node.attr('transform', function(d){return 'translate('+d.x+','+d.y+')';});
+      link.attr('x1', function(l){ return l.source.x; }).attr('y1', function(l){ return l.source.y; })
+          .attr('x2', function(l){ return l.target.x; }).attr('y2', function(l){ return l.target.y; });
+      node.attr('transform', function(d){ return 'translate(' + d.x + ',' + d.y + ')'; });
     });
 
     var drag = d3.drag()
-      .on('start', function(ev,d){ if(!ev.active) sim.alphaTarget(0.3).restart(); d.fx=d.x; d.fy=d.y; })
-      .on('drag', function(ev,d){ d.fx=ev.x; d.fy=ev.y; })
-      .on('end', function(ev,d){ if(!ev.active) sim.alphaTarget(0); d.fx=null; d.fy=null; });
+      .on('start', function(ev, d){ if (!ev.active) sim.alphaTarget(0.3).restart(); d.fx = d.x; d.fy = d.y; })
+      .on('drag', function(ev, d){ d.fx = ev.x; d.fy = ev.y; })
+      .on('end', function(ev, d){ if (!ev.active) sim.alphaTarget(0); d.fx = null; d.fy = null; });
     node.call(drag);
   }
 
-  // init on first open so SVG has real dimensions
   function wire(id, fn){
     var el = document.getElementById(id).closest('details');
-    el.addEventListener('toggle', function(){ if(el.open) setTimeout(fn, 40); });
+    el.addEventListener('toggle', function(){ if (el.open) setTimeout(fn, 40); });
+    if (el.open) setTimeout(fn, 60);
   }
   if (window.d3){ wire('budgetViz', buildBudget); wire('netViz', buildNet); }
 })();
